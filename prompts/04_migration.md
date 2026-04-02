@@ -21,7 +21,21 @@ Passo 2: progetta le tabelle PostgreSQL con tipi corretti e vincoli.
 Passo 3: genera lo script Python ETL con parsing, pulizia, validazione e inserimento.
 Passo 4: aggiungi query SQL di verifica post-migrazione.
 
-OUTPUT:
+FORMATO OUTPUT — DUE PARTI OBBLIGATORIE:
+
+### PARTE 1 — SPIEGAZIONE NARRATIVA
+Scrivi una spiegazione chiara e leggibile usando il seguente formato:
+Le sfide principali di questa migrazione
+Lista numerata. Per ogni sfida: nome in grassetto + una riga che spiega il problema.
+Come vengono gestite le anomalie
+Lista puntata. Per ogni anomalia: descrizione del problema -> soluzione adottata.
+Cosa cambia dopo la migrazione
+Lista puntata con i benefici concreti per i dati: prima (COBOL) -> dopo (PostgreSQL).
+Ogni punto deve essere breve e diretto — massimo 2 righe per voce.
+Scrivi in modo chiaro, spiegando le scelte tecniche in linguaggio accessibile.
+
+### PARTE 2 — DOCUMENTAZIONE TECNICA
+Produci le sezioni strutturate:
 ## Schema PostgreSQL
 ## Script ETL Python completo e commentato
 ## Query di Verifica

@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.13.11"
+__generated_with = "0.22.0"
 app = marimo.App(width="medium")
 
 
@@ -15,8 +15,11 @@ def _():
     from pydantic import BaseModel, Field
     from typing import TypedDict, Annotated, Optional
     from dotenv import load_dotenv
-    from langchain_mistralai import ChatMistralAI
 
+    # LangChain aggiornato — nessun conflitto di dipendenze
+    from langchain_mistralai import ChatMistralAI
+    from langchain_groq import ChatGroq
+    from langchain_anthropic import ChatAnthropic
     from langchain_core.messages import SystemMessage, HumanMessage
     from langgraph.checkpoint.memory import MemorySaver
     from langgraph.graph import StateGraph, START, END
@@ -25,13 +28,12 @@ def _():
     import mlflow.langchain
 
     load_dotenv()
-    mlflow.set_experiment("COBOL-Modernizer")
+    mlflow.set_experiment("COBOL-Modernizer-v2")
     mlflow.langchain.autolog(log_traces=False)
-
     return (
         Annotated,
         BaseModel,
-        ChatMistralAI,
+        ChatAnthropic,
         END,
         Field,
         HumanMessage,
@@ -85,9 +87,7 @@ def _(os):
     PROMPT_FILELIST     = _prompt("05b_filelist.md")
     PROMPT_REVIEWER     = _prompt("06_reviewer.md")
 
-
     print(f"COBOL caricato: {len(COBOL_ACCOUNTING) + len(COBOL_BUYROUTINE)} char")
-
     return (
         COBOL_CONTEXT,
         PROMPT_ARCHITECTURE,
@@ -105,7 +105,7 @@ def _(
     Annotated,
     BaseModel,
     COBOL_CONTEXT,
-    ChatMistralAI,
+    ChatAnthropic,
     END,
     Field,
     HumanMessage,
@@ -127,24 +127,26 @@ def _(
     time,
     uuid,
 ):
-    llm = ChatMistralAI(
-        model="mistral-small-latest",
-        temperature=0,
-        api_key=os.getenv("MISTRAL_API_KEY"),
-        timeout=300,
-    )
+    # ── Scegli il modello LLM ─────────────────────────────────────────────────
+    # Cambia questa riga per usare un modello diverso:
+    # llm = ChatMistralAI(model="mistral-large-latest", temperature=0, api_key=os.getenv("MISTRAL_API_KEY"), timeout=120)
+    # llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0, api_key=os.getenv("GROQ_API_KEY"))
+    llm = ChatAnthropic(model="claude-haiku-4-5-20251001", temperature=0, api_key=os.getenv("ANTHROPIC_API_KEY"))
 
     class ModernizerState(TypedDict):
         messages:             Annotated[list, add_messages]
         user_request:         str
         next_agent:           str
-        modalita:             str   # "step" | "auto"
+        modalita:             str
+        last_completed:       str   # nodo appena completato — usato dall orchestratore per decidere END
+        full_generation:      bool  # True = genera tutti i file, False = risposta singola
         discovery_done:       bool
         architecture_done:    bool
         migration_done:       bool
         discovery_output:     str
         architecture_output:  str
         migration_output:     str
+        files_da_generare:    str   # JSON con lista file prodotta dall architecture agent
         codegen_output:       str
         reviewer_output:      str
         final_response:       str
@@ -159,12 +161,11 @@ def _(
         "genera il progetto",
     ]
 
-    # Sequenza automatica per modalita one-click
-    AUTO_SEQUENCE = ["discovery", "architecture", "migration", "full_codegen"]
+    AUTO_SEQUENCE = ["discovery", "architecture", "migration", "codegen"]
 
     class OrchestratorDecision(BaseModel):
         ragionamento:  str = Field(description="Perche hai scelto questo agente.")
-        next_agent:    str = Field(description="Agente: discovery, architecture, migration, codegen, full_codegen, reviewer")
+        next_agent:    str = Field(description="Agente: discovery, architecture, migration, codegen, reviewer")
         missing_steps: str = Field(description="Step precedenti mancanti, o nessuno.")
 
     orchestrator_llm = llm.with_structured_output(OrchestratorDecision)
@@ -176,30 +177,33 @@ def _(
         is_full_gen = any(t in req for t in TRIGGER_FULL_GEN)
         modalita = "auto" if is_full_gen else "step"
 
-        # In modalita auto: segue la sequenza predefinita senza chiamare LLM
         if state.get("modalita") == "auto":
             modalita = "auto"
-            # Trova il prossimo step da eseguire nella sequenza
+
+            # Se codegen e appena completato -> fine sequenza
+            if state.get("last_completed") == "codegen":
+                print("   -> [AUTO] Completato -> END")
+                return {"next_agent": "end", "modalita": modalita}
+
             for step in AUTO_SEQUENCE:
-                done_key = step.replace("full_codegen", "codegen") + "_done"
-                if step == "full_codegen":
-                    # full_codegen si attiva quando discovery+architecture+migration sono done
+                if step == "codegen":
                     if (state.get("discovery_done", False) and
                         state.get("architecture_done", False) and
                         state.get("migration_done", False)):
-                        agent = "full_codegen"
-                        print(f"   -> [AUTO] Agente: {agent}")
-                        return {"next_agent": agent, "modalita": modalita}
+                        print("   -> [AUTO] codegen (full generation)")
+                        return {"next_agent": "codegen", "full_generation": True, "modalita": modalita}
                 else:
                     if not state.get(step + "_done", False):
-                        agent = step
-                        print(f"   -> [AUTO] Agente: {agent}")
-                        return {"next_agent": agent, "modalita": modalita}
-            # Tutti gli step completati
-            print("   -> [AUTO] Tutti gli step completati -> END")
+                        print(f"   -> [AUTO] {step}")
+                        return {"next_agent": step, "modalita": modalita}
+            print("   -> [AUTO] Completato -> END")
             return {"next_agent": "end", "modalita": modalita}
 
-        # In modalita step: usa LLM per decidere
+        # In step-by-step: se un nodo ha appena completato il suo lavoro, fermati
+        if state.get("last_completed"):
+            print(f"   -> [STEP] {state['last_completed']} completato -> END")
+            return {"next_agent": "end", "last_completed": ""}
+
         ctx = (
             f"STATO: discovery={state.get('discovery_done',False)}, "
             f"architecture={state.get('architecture_done',False)}, "
@@ -210,10 +214,9 @@ def _(
             SystemMessage(content=PROMPT_ORCHESTRATOR),
             HumanMessage(content=ctx),
         ])
-        agent = "full_codegen" if is_full_gen else res.next_agent.strip().lower()
+        agent = "codegen" if is_full_gen else res.next_agent.strip().lower()
 
-        # Opzione B: forza step obbligatori
-        if agent in ("codegen", "full_codegen", "reviewer"):
+        if agent in ("codegen", "reviewer"):
             if not state.get("discovery_done", False):
                 agent = "discovery"
                 print("   -> Forzo DISCOVERY")
@@ -222,15 +225,13 @@ def _(
                 print("   -> Forzo ARCHITECTURE")
         if agent == "migration" and not state.get("discovery_done", False):
             agent = "discovery"
-            print("   -> Forzo DISCOVERY (richiesto prima di migration)")
 
-        print(f"   -> [STEP] Agente selezionato: {agent}")
+        print(f"   -> [STEP] {agent}")
         span = mlflow.get_current_active_span()
         if span:
             span.set_attribute("ragionamento", res.ragionamento)
             span.set_attribute("next_agent", agent)
-            span.set_attribute("modalita", modalita)
-        return {"next_agent": agent, "modalita": modalita}
+        return {"next_agent": agent, "modalita": modalita, "full_generation": is_full_gen}
 
     @mlflow.trace(name="[2] Discovery")
     def discovery_node(state: ModernizerState):
@@ -240,16 +241,14 @@ def _(
             HumanMessage(content="Analizza il COBOL seguente:\n\n" + COBOL_CONTEXT),
         ])
         out = res.content
-        span = mlflow.get_current_active_span()
-        if span:
-            span.set_attribute("output_length", len(out))
-            span.set_attribute("preview", out[:200])
-        print(f"   -> {len(out)} char generati")
-        return {"discovery_output": out, "discovery_done": True, "final_response": out}
+        print(f"   -> {len(out)} char")
+        return {"discovery_output": out, "discovery_done": True, "final_response": out, "last_completed": "discovery"}
 
     @mlflow.trace(name="[3] Architecture")
     def architecture_node(state: ModernizerState):
-        print("\n[ARCHITECTURE] Progettazione struttura Python...")
+        print("\n[ARCHITECTURE] Progettazione...")
+
+        # Step 1: genera architettura testuale
         res = llm.invoke([
             SystemMessage(content=PROMPT_ARCHITECTURE),
             HumanMessage(content=(
@@ -258,16 +257,47 @@ def _(
             )),
         ])
         out = res.content
-        span = mlflow.get_current_active_span()
-        if span:
-            span.set_attribute("output_length", len(out))
-            span.set_attribute("preview", out[:200])
-        print(f"   -> {len(out)} char generati")
-        return {"architecture_output": out, "architecture_done": True, "final_response": out}
+        print(f"   -> {len(out)} char (architettura)")
+
+        # Step 2: genera lista file basata sull architettura appena prodotta
+        print("   -> Generazione lista file dall architettura...")
+
+        class FileSpec(BaseModel):
+            path:       str = Field(description="Path relativo del file, es. app/models/product.py")
+            istruzione: str = Field(description="Istruzione specifica per generare questo file")
+
+        class FileList(BaseModel):
+            files: list[FileSpec] = Field(description="Lista ordinata dei file da generare, max 20 file")
+
+        file_list_llm = llm.with_structured_output(FileList)
+
+        try:
+            file_list_result = file_list_llm.invoke([
+                SystemMessage(content=PROMPT_FILELIST),
+                HumanMessage(content=(
+                    "ARCHITETTURA PROGETTATA:\n\n" + out +
+                    "\n\nBUSINESS RULES:\n" + state.get("discovery_output", "")[:1000]
+                )),
+            ])
+            files = [{"path": f.path, "istruzione": f.istruzione} for f in file_list_result.files]
+            import json as _json
+            files_json = _json.dumps(files, ensure_ascii=False)
+            print(f"   -> Lista: {len(files)} file")
+        except Exception as e:
+            print(f"   -> Errore lista file: {e} — lista vuota")
+            files_json = "[]"
+
+        return {
+            "architecture_output":  out,
+            "architecture_done":    True,
+            "files_da_generare":    files_json,
+            "final_response":       out,
+            "last_completed":       "architecture",
+        }
 
     @mlflow.trace(name="[4] Migration")
     def migration_node(state: ModernizerState):
-        print("\n[MIGRATION] Script ETL PostgreSQL...")
+        print("\n[MIGRATION] Script ETL...")
         res = llm.invoke([
             SystemMessage(content=PROMPT_MIGRATION),
             HumanMessage(content=(
@@ -277,120 +307,89 @@ def _(
             )),
         ])
         out = res.content
-        span = mlflow.get_current_active_span()
-        if span:
-            span.set_attribute("output_length", len(out))
-            span.set_attribute("preview", out[:200])
-        print(f"   -> {len(out)} char generati")
-        return {"migration_output": out, "migration_done": True, "final_response": out}
+        print(f"   -> {len(out)} char")
+        return {"migration_output": out, "migration_done": True, "final_response": out, "last_completed": "migration"}
 
-    @mlflow.trace(name="[5] CodeGen Singolo")
+    @mlflow.trace(name="[5] CodeGen")
     def codegen_node(state: ModernizerState):
-        print("\n[CODEGEN] Risposta singola (senza salvare file)...")
-        res = llm.invoke([
-            SystemMessage(content=PROMPT_CODEGEN),
-            HumanMessage(content=(
-                "COBOL:\n" + COBOL_CONTEXT +
-                "\n\nBUSINESS RULES:\n" + state.get("discovery_output", "") +
-                "\n\nARCHITETTURA:\n" + state.get("architecture_output", "") +
-                "\n\nMIGRAZIONE:\n" + state.get("migration_output", "") +
-                "\n\nRICHIESTA SPECIFICA: " + state.get("user_request", "")
-            )),
-        ])
-        out = res.content
-        span = mlflow.get_current_active_span()
-        if span:
-            span.set_attribute("output_length", len(out))
-        print(f"   -> {len(out)} char generati (nessun file salvato)")
-        return {"codegen_output": out, "final_response": out}
+        if state.get("full_generation"):
+            print("\n[CODEGEN] Modalita full generation...")
+        else:
+            print("\n[CODEGEN] Risposta singola...")
+            res = llm.invoke([
+                SystemMessage(content=PROMPT_CODEGEN),
+                HumanMessage(content=(
+                    "COBOL:\n" + COBOL_CONTEXT +
+                    "\n\nBUSINESS RULES:\n" + state.get("discovery_output", "") +
+                    "\n\nARCHITETTURA:\n" + state.get("architecture_output", "") +
+                    "\n\nMIGRAZIONE:\n" + state.get("migration_output", "") +
+                    "\n\nRICHIESTA: " + state.get("user_request", "")
+                )),
+            ])
+            out = res.content
+            print(f"   -> {len(out)} char (nessun file salvato)")
+            return {"codegen_output": out, "final_response": out, "last_completed": "codegen"}
 
-    @mlflow.trace(name="[5b] Full CodeGen")
-    def full_codegen_node(state: ModernizerState):
-        print("\n[FULL CODEGEN] Avvio generazione completa del progetto...")
+        print("\n[FULL CODEGEN] Avvio generazione completa...")
 
         base    = os.path.dirname(os.path.abspath(__file__))
         out_dir = os.path.join(base, "output")
 
         architecture = state.get("architecture_output", "")
         discovery    = state.get("discovery_output", "")
-        migration    = state.get("migration_output", "")
 
-        # ── Step 1: chiedi a Mistral la lista dei file da generare ────────────
-        print("   [1/2] Generazione lista file dall architettura...")
-
-        class FileSpec(BaseModel):
-            path:       str = Field(description="Path relativo del file, es. app/models/product.py")
-            istruzione: str = Field(description="Istruzione specifica per generare questo file")
-
-        class FileList(BaseModel):
-            files: list[FileSpec] = Field(description="Lista ordinata dei file da generare")
-
-        file_list_llm = llm.with_structured_output(FileList)
-
-        prompt_lista = (
-            "ARCHITETTURA PROGETTATA:\n\n" + architecture +
-            "\n\nBUSINESS RULES:\n" + discovery[:1000]
-        )
-
+        # Usa la lista file prodotta dall architecture agent
+        import json as _json
         try:
-            file_list_result = file_list_llm.invoke([
-                SystemMessage(content=PROMPT_FILELIST),
-                HumanMessage(content=prompt_lista),
-            ])
-            files_da_generare = [(f.path, f.istruzione) for f in file_list_result.files]
-            print(f"   -> Lista generata: {len(files_da_generare)} file")
+            files_raw = _json.loads(state.get("files_da_generare", "[]"))
+            files_da_generare = [(f["path"], f["istruzione"]) for f in files_raw]
+            print(f"   [1/1] Lista file dall architettura: {len(files_da_generare)} file")
         except Exception as e:
-            print(f"   -> Errore generazione lista: {e} - uso lista di fallback")
+            print(f"   -> Errore lettura lista: {e} - fallback")
             files_da_generare = [
-                ("requirements.txt", "Genera requirements.txt con sqlalchemy, psycopg2-binary, bcrypt, python-dotenv, pytest"),
+                ("requirements.txt", "Genera requirements.txt con sqlalchemy, psycopg2-binary, bcrypt, python-dotenv"),
                 (".env.example",     "Genera .env.example con DATABASE_URL, ADMIN_EMAIL, ADMIN_PASSWORD_HASH"),
                 ("README.md",        "Genera README.md con istruzioni setup e avvio"),
             ]
 
-        time.sleep(65)  # pausa dopo generazione lista
-
-        # ── Step 2: genera ogni file uno alla volta ───────────────────────────
-        print(f"   [2/2] Generazione {len(files_da_generare)} file...")
+        # Genera ogni file
+        print(f"   Generazione {len(files_da_generare)} file...")
 
         contesto_base = (
-            "=== ARCHITETTURA PROGETTATA ===\n" + architecture +
+            "=== ARCHITETTURA ===\n" + architecture +
             "\n\n=== BUSINESS RULES ===\n" + discovery[:800] +
-            "\n\n=== BUSINESS RULES CHIAVE ===\n"
-            "- SALARY = HOURLY_RATE * HOURS_WORKED (HOURLY_RATE default 500)\n"
+            "\n\n=== REGOLE CHIAVE ===\n"
+            "- SALARY = HOURLY_RATE * HOURS_WORKED (default 500)\n"
             "- PROFIT = SELLING_PRICE - COGS\n"
             "- CHANGE = PAYMENT - TOTAL\n"
-            "- Admin: email=robby@gmail.com, password hashata con bcrypt\n"
-            "- DB: PostgreSQL via SQLAlchemy, config da .env (DATABASE_URL)\n"
+            "- Admin: robby@gmail.com, password bcrypt\n"
+            "- DB: PostgreSQL via SQLAlchemy, config da .env\n"
         )
 
-        file_generati   = []
-        file_falliti    = []
+        file_generati = []
+        file_falliti  = []
         contesto_codice = ""
-        totale          = len(files_da_generare)
-
+        totale = len(files_da_generare)
         span = mlflow.get_current_active_span()
 
         for idx, (filepath, istruzione) in enumerate(files_da_generare, 1):
-            print(f"   [{idx}/{totale}] Generazione {filepath}...")
-
+            print(f"   [{idx}/{totale}] {filepath}...")
             successo = False
             for attempt in range(3):
                 try:
                     prompt_file = (
                         contesto_base +
                         "\n\nCODICE GIA GENERATO:\n" + contesto_codice +
-                        "\n\nFILE DA GENERARE ADESSO: " + filepath +
+                        "\n\nFILE: " + filepath +
                         "\nISTRUZIONE: " + istruzione +
-                        "\n\nRESTITUISCI SOLO IL CODICE, senza spiegazioni o markdown."
+                        "\n\nRestituisci SOLO il codice, senza spiegazioni o markdown."
                     )
-
                     res = llm.invoke([
                         SystemMessage(content=PROMPT_CODEGEN),
                         HumanMessage(content=prompt_file),
                     ])
                     codice = res.content
 
-                    # Pulizia markdown code blocks
                     if codice.strip().startswith("```"):
                         lines = codice.strip().split("\n")
                         lines = lines[1:]
@@ -398,31 +397,28 @@ def _(
                             lines = lines[:-1]
                         codice = "\n".join(lines)
 
-                    # Salva il file
                     full_path = os.path.join(out_dir, filepath)
                     os.makedirs(os.path.dirname(full_path), exist_ok=True)
                     with open(full_path, "w", encoding="utf-8") as f:
                         f.write(codice)
 
-                    # Accumula tutto il codice per coerenza import
                     contesto_codice += f"\n# === {filepath} ===\n{codice}\n"
 
                     file_generati.append(filepath)
-                    print(f"      -> OK tentativo {attempt+1} ({len(codice)} char)")
+                    print(f"      -> OK ({len(codice)} char)")
                     successo = True
-                    time.sleep(65)  # pausa tra file per evitare rate limit
+                    time.sleep(2)
                     break
 
                 except Exception as e:
-                    print(f"      -> Tentativo {attempt+1}/3 fallito: {e}")
-                    if attempt < 2:
-                        time.sleep(20)
+                    print(f"      -> Tentativo {attempt+1}/3: {e}")
+                    if attempt < 10:
+                        time.sleep(120)
 
             if not successo:
-                print(f"      -> File saltato dopo 3 tentativi")
                 file_falliti.append(filepath)
+                print(f"      -> Saltato")
 
-        # Crea zip del progetto
         import zipfile
         zip_path = os.path.join(base, "supermarket_modernizzato.zip")
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -440,15 +436,14 @@ def _(
             f"File generati ({len(file_generati)}/{totale}):\n" +
             "\n".join(f"  - {f}" for f in file_generati) +
             (f"\n\nFile falliti:\n" + "\n".join(f"  - {f}" for f in file_falliti) if file_falliti else "") +
-            f"\n\nProgetto salvato in: output/\n"
-            f"ZIP disponibile in: supermarket_modernizzato.zip"
+            f"\n\nProgetto in: output/\nZIP: supermarket_modernizzato.zip"
         )
-        print(f"\n[FULL CODEGEN] Completato: {len(file_generati)}/{totale} file generati")
-        return {"codegen_output": riepilogo, "final_response": riepilogo}
+        print(f"\n[FULL CODEGEN] {len(file_generati)}/{totale} file generati")
+        return {"codegen_output": riepilogo, "final_response": riepilogo, "last_completed": "codegen"}
 
     @mlflow.trace(name="[6] Reviewer")
     def reviewer_node(state: ModernizerState):
-        print("\n[REVIEWER] Verifica qualita codice...")
+        print("\n[REVIEWER] Verifica qualita...")
         res = llm.invoke([
             SystemMessage(content=PROMPT_REVIEWER),
             HumanMessage(content=(
@@ -457,24 +452,20 @@ def _(
             )),
         ])
         out = res.content
-        span = mlflow.get_current_active_span()
-        if span:
-            span.set_attribute("output_length", len(out))
-        print(f"   -> {len(out)} char generati")
-        return {"reviewer_output": out, "final_response": out}
+        print(f"   -> {len(out)} char")
+        return {"reviewer_output": out, "final_response": out, "last_completed": "reviewer"}
 
     def route_after_orchestrator(state: ModernizerState):
         agent = state.get("next_agent", "discovery")
         if agent == "end":
             return END
-        valid = {"discovery", "architecture", "migration", "codegen", "full_codegen", "reviewer"}
+        valid = {"discovery", "architecture", "migration", "codegen", "reviewer"}
         return agent if agent in valid else "discovery"
 
     def route_after_node(state: ModernizerState):
-        """step → END, auto → orchestrator per il prossimo step."""
-        if state.get("modalita") == "auto":
-            return "orchestrator"
-        return END
+        # Tutti i nodi tornano sempre all orchestratore.
+        # E l orchestratore a decidere se continuare o andare a END.
+        return "orchestrator"
 
     builder = StateGraph(ModernizerState)
     builder.add_node("orchestrator",  orchestrator_node)
@@ -482,25 +473,17 @@ def _(
     builder.add_node("architecture",  architecture_node)
     builder.add_node("migration",     migration_node)
     builder.add_node("codegen",       codegen_node)
-    builder.add_node("full_codegen",  full_codegen_node)
     builder.add_node("reviewer",      reviewer_node)
 
     builder.add_edge(START, "orchestrator")
     builder.add_conditional_edges(
         "orchestrator", route_after_orchestrator,
-        {
-            "discovery":    "discovery",
-            "architecture": "architecture",
-            "migration":    "migration",
-            "codegen":      "codegen",
-            "full_codegen": "full_codegen",
-            "reviewer":     "reviewer",
-            END:            END,
-        }
+        {"discovery": "discovery", "architecture": "architecture",
+         "migration": "migration", "codegen": "codegen",
+         "reviewer": "reviewer", END: END}
     )
-    for _n in ["discovery", "architecture", "migration", "codegen", "full_codegen", "reviewer"]:
-        builder.add_conditional_edges(_n, route_after_node,
-            {"orchestrator": "orchestrator", END: END})
+    for _n in ["discovery", "architecture", "migration", "codegen", "reviewer"]:
+        builder.add_edge(_n, "orchestrator")
 
     memory = MemorySaver()
     graph  = builder.compile(checkpointer=memory)
@@ -509,8 +492,11 @@ def _(
         thread_id = str(uuid.uuid4())
         project_state = {
             "modalita": "step",
+            "last_completed": "",
+            "full_generation": False,
             "discovery_done": False, "architecture_done": False, "migration_done": False,
             "discovery_output": "", "architecture_output": "",
+            "files_da_generare": "[]",
             "migration_output": "", "codegen_output": "",
         }
 
@@ -518,8 +504,8 @@ def _(
             user_message = getattr(messages, "content", messages)[-1].content
             if mlflow.active_run():
                 mlflow.end_run()
-            with mlflow.start_run(run_name=f"modernizer-{thread_id[:8]}"):
-                mlflow.log_param("model", "mistral-small-latest")
+            with mlflow.start_run(run_name=f"modernizer-v2-{thread_id[:8]}"):
+                mlflow.log_param("model", "claude-haiku")
                 mlflow.log_param("user_request", user_message[:100])
                 mlflow.log_text(user_message, "user_request.txt")
                 for attempt in range(3):
@@ -530,9 +516,10 @@ def _(
                             config={"configurable": {"thread_id": thread_id, "recursion_limit": 10}},
                             debug=True,
                         )
-                        for key in ["modalita", "discovery_done", "architecture_done",
-                                    "migration_done", "discovery_output", "architecture_output",
-                                    "migration_output", "codegen_output"]:
+                        for key in ["discovery_done", "architecture_done", "migration_done",
+                                    "discovery_output", "architecture_output",
+                                    "files_da_generare", "migration_output", "codegen_output",
+                                    "last_completed", "full_generation"]:
                             if response.get(key) is not None:
                                 project_state[key] = response[key]
                         mlflow.log_metric("discovery_done",    int(project_state["discovery_done"]))
@@ -541,23 +528,58 @@ def _(
                         output = response.get("final_response", "")
                         if output:
                             mlflow.log_text(output, "agent_output.txt")
+
+                            # Salva l output in un file .md nella cartella outputs/
+                            last = project_state.get("last_completed", "output")
+                            if not last:
+                                last = "output"
+                            import datetime as _dt
+                            timestamp = _dt.datetime.now().strftime("%H%M%S")
+                            outputs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
+                            os.makedirs(outputs_dir, exist_ok=True)
+                            md_path = os.path.join(outputs_dir, f"{last}_{timestamp}.md")
+                            with open(md_path, "w", encoding="utf-8") as _f:
+                                _f.write(f"# Output: {last}\n")
+                                _f.write(f"*Generato il {_dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n\n")
+                                _f.write(f"**Richiesta utente:** {user_message}\n\n")
+                                _f.write("---\n\n")
+                                _f.write(output)
+                            print(f"   -> Output salvato in: outputs/{last}_{timestamp}.md")
+
                             return output
                         return "Errore: nessun output generato."
                     except Exception as e:
                         mlflow.log_param("error", str(e))
                         if "503" in str(e) or "overflow" in str(e):
                             if attempt < 2:
-                                time.sleep(2)
+                                import time as _t
+                                _t.sleep(2)
                                 continue
                         return f"Errore: {e}"
         return chatbot_handler
 
-    return graph, resetChatbot
+    return (resetChatbot,)
 
 
 @app.cell
-def _(graph, mo):
-    mo.mermaid(graph.get_graph().draw_mermaid())
+def _(mo):
+    mo.mermaid("""
+    graph LR
+    S([start]) --> ORC[orchestrator]
+
+    ORC -->|step| DIS[discovery]
+    ORC -->|step| ARC[architecture]
+    ORC -->|step| MIG[migration]
+    ORC -->|step/full| COD[codegen]
+    ORC -->|step| REV[reviewer]
+    ORC -->|fine| E([end])
+
+    DIS --> ORC
+    ARC --> ORC
+    MIG --> ORC
+    COD --> ORC
+    REV --> ORC
+    """)
     return
 
 
@@ -574,14 +596,8 @@ def _(mo, resetChatbot):
         ],
     )
     mo.vstack([
-        mo.md("## COBOL Modernizer - Supermarket System"),
-        mo.md(
-            "**Flusso consigliato:**\n"
-            "1. Analizza il COBOL\n"
-            "2. Progetta l architettura\n"
-            "3. Genera lo script di migrazione\n"
-            "4. **Genera il progetto completo** (crea tutti i file Python)"
-        ),
+        mo.md("## COBOL Modernizer v2 — LangChain aggiornato"),
+        mo.md("Modello attivo: **Claude Haiku** — cambia nella cella 3 per usare Groq o Mistral."),
         chat_interface,
     ])
     return

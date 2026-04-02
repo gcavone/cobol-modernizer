@@ -1,0 +1,24 @@
+[project]
+name = "cobol-modernizer2"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Your Name",email = "you@example.com"}
+]
+requires-python = ">=3.11,<3.15"
+dependencies = [
+    "langchain (>=1.2.14,<2.0.0)",
+    "langgraph (>=1.1.4,<2.0.0)",
+    "langchain-mistralai (>=1.1.2,<2.0.0)",
+    "langchain-groq (>=1.1.2,<2.0.0)",
+    "langchain-anthropic (>=1.4.0,<2.0.0)",
+    "python-dotenv (>=1.2.2,<2.0.0)",
+    "mlflow (>=3.10.1,<4.0.0)",
+    "marimo (>=0.22.0,<0.23.0)",
+    "langchain-google-genai (>=4.2.1,<5.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

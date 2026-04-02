@@ -20,7 +20,27 @@ Passo 3 - FLUSSI: mappa ogni flusso utente (login, acquisto, gestione prodotti).
 Passo 4 - ANOMALIE: segnala problemi nel codice legacy (duplicati, hardcoding, bug).
 Passo 5 - DIPENDENZE: elenca le dipendenze tra moduli e file di dati.
 
-OUTPUT RICHIESTO:
+FORMATO OUTPUT — DUE PARTI OBBLIGATORIE:
+
+### PARTE 1 — SPIEGAZIONE NARRATIVA
+Scrivi una spiegazione chiara e leggibile usando il seguente formato:
+Cosa fa il sistema
+Breve paragrafo introduttivo (3-4 righe massimo).
+Come funziona — flusso principale
+Usa una lista numerata con i passi chiave del sistema.
+Le logiche di business principali
+Usa una lista puntata, una riga per ogni regola.
+I problemi principali del codice legacy
+Usa una lista numerata. Per ogni problema: nome del problema in grassetto, poi una riga di spiegazione.
+Cosa si guadagna con la modernizzazione
+Usa una lista puntata con i benefici chiave, sintetica.
+Ogni punto deve essere breve e diretto — massimo 2 righe per voce.
+Scrivi come se dovessi spiegare il sistema a un collega che non conosce COBOL.
+Usa un linguaggio chiaro e accessibile, evitando acronimi tecnici non spiegati.
+
+
+### PARTE 2 — ANALISI TECNICA
+Produci le sezioni strutturate con tabelle e liste:
 ## Business Rules Estratte
 ## Strutture Dati
 ## Flussi Utente
