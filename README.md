@@ -59,7 +59,7 @@ Il sistema multi-agente analizza il codice COBOL di un gestionale per supermerca
 - Lo script ETL per la migrazione dati (Migration Agent)
 - Il codice Python completo file per file (CodeGen Agent)
 
-📖 **[Istruzioni complete → CobolModernizer2/README.md](CobolModernizer2/README.md)**
+📖 **[Istruzioni complete → README_SISTEMA_MULTIAGENTE.md](README_SISTEMA_MULTIAGENTE.md)**
 
 ---
 
@@ -87,13 +87,6 @@ Il gestionale per supermercati modernizzato, con:
 | Database | PostgreSQL + SQLAlchemy |
 | Gestione ambiente | Poetry |
 | Test | pytest |
-
----
-
-## Relazione e Presentazione
-
-- 📄 Relazione finale: `Relazione_COBOL_Modernizer_FINALE.pdf`
-- 📊 Presentazione: `CobolModernizer_Presentazione.pptx`
 
 ---
 
