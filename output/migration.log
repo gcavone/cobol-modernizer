@@ -1,0 +1,225 @@
+2026-04-02 17:53:25,642 - INFO - ============================================================
+2026-04-02 17:53:25,642 - INFO - STARTING ETL MIGRATION: COBOL → PostgreSQL
+2026-04-02 17:53:25,642 - INFO - ============================================================
+2026-04-02 17:53:25,642 - INFO - Loading DATABASE.txt from DATABASE.txt
+2026-04-02 17:53:25,642 - WARNING - Record too short (44 chars): 00000001 Canned Sardines		     155g   18.75
+
+2026-04-02 17:53:25,642 - WARNING - Record too short (44 chars): 00000001 Canned Sardines		     155g   18.75
+
+2026-04-02 17:53:25,642 - WARNING - Record too short (50 chars): 00000002 Canned Sardines Spicy		     155g   18.75
+
+2026-04-02 17:53:25,642 - WARNING - Record too short (50 chars): 00000002 Canned Sardines Spicy		     155g   18.75
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000003 Condensed Milk 		     300mL  53.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000003 Condensed Milk 		     300mL  53.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000004 Evaporated Milk		     410mL  44.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000004 Evaporated Milk		     410mL  44.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (43 chars): 00000005 Powdered Milk			     300g   96.25
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (43 chars): 00000005 Powdered Milk			     300g   96.25
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (43 chars): 00000006 Ground Coffee			     50g    43.25
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (43 chars): 00000006 Ground Coffee			     50g    43.25
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (42 chars): 00000007 3-in-1 Coffee			     28g    7.25
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (42 chars): 00000007 3-in-1 Coffee			     28g    7.25
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (41 chars): 00000008 Pinoy Tasty			     450g   40.50
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (41 chars): 00000008 Pinoy Tasty			     450g   40.50
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000009 Pinoy Pandesal 		     250g   25.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000009 Pinoy Pandesal 		     250g   25.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (57 chars): 00000010 Instant Noodles Chicken Flavor      55g    7.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (57 chars): 00000010 Instant Noodles Chicken Flavor      55g    7.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (54 chars): 00000011 Instant Noodles Beef Flavor	     55g    7.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (54 chars): 00000011 Instant Noodles Beef Flavor	     55g    7.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (46 chars): 00000012 Iodized Rock Salt		     1kg    23.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (46 chars): 00000012 Iodized Rock Salt		     1kg    23.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (48 chars): 00000013 Laundry FabCon Soap		     370g   23.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (48 chars): 00000013 Laundry FabCon Soap		     370g   23.00
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000014 Distilled Water		     1L     25.25
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000014 Distilled Water		     1L     25.25
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000015 Purified Water 		     1L     18.50
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (44 chars): 00000015 Purified Water 		     1L     18.50
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (46 chars): 00000016 Mineralized Water		     1L     19.50
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (46 chars): 00000016 Mineralized Water		     1L     19.50
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (34 chars): 00000017 Luncheon Meat			     165
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (34 chars): 00000017 Luncheon Meat			     165
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (40 chars): 00000027Ketchup 			     155g   00007000
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (40 chars): 00000027Ketchup 			     155g   00007000
+
+2026-04-02 17:53:25,643 - WARNING - Record too short (39 chars): 00000032Pepper				     155g   00008000
+
+2026-04-02 17:53:25,643 - WARNING - Line 38: Record too short, skipping
+2026-04-02 17:53:25,643 - INFO - Loaded 0 valid products from DATABASE.txt
+2026-04-02 17:53:25,643 - INFO - Duplicates: 0, Invalid: 37
+2026-04-02 17:53:25,643 - INFO - Loading products.txt from products.txt
+2026-04-02 17:53:25,645 - INFO - Loaded 26 additional products from products.txt
+2026-04-02 17:53:25,645 - INFO - Inserting 26 products into PostgreSQL
+2026-04-02 17:53:26,275 - ERROR - Database error: relation "products" does not exist
+LINE 2:                 INSERT INTO products (code, name, unit, pric...
+                                    ^
+
+2026-04-02 17:53:26,277 - INFO - 
+╔════════════════════════════════════════════════════════════╗
+║           MIGRATION REPORT - PRODUCTS                      ║
+╚════════════════════════════════════════════════════════════╝
+
+Total Products Loaded:     26
+Duplicates Removed:        0
+Invalid Records:           37
+
+Products by Price Range:
+  < 10.00 PHP:             3
+  10.00 - 50.00 PHP:       20
+  50.00 - 100.00 PHP:      3
+  > 100.00 PHP:            0
+
+Sample Products:
+  1. 00000001 | Canned Sardines                | 155g       | PHP 18.75
+  2. 00000002 | Canned Sardines Spicy          | 155g       | PHP 18.75
+  3. 00000003 | Condensed Milk                 | 300mL      | PHP 53.00
+  4. 00000004 | Evaporated Milk                | 410mL      | PHP 44.00
+  5. 00000005 | Powdered Milk                  | 300g       | PHP 96.25
+
+============================================================
+
+2026-04-02 17:53:26,277 - ERROR - ✗ Migration failed!
+2026-04-02 17:53:26,277 - INFO - ============================================================
+2026-04-02 18:03:46,997 - INFO - ============================================================
+2026-04-02 18:03:46,997 - INFO - STARTING ETL MIGRATION: COBOL → PostgreSQL
+2026-04-02 18:03:46,997 - INFO - ============================================================
+2026-04-02 18:03:46,998 - INFO - Loading DATABASE.txt from DATABASE.txt
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000001 Canned Sardines		     155g   18.75
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000001 Canned Sardines		     155g   18.75
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (50 chars): 00000002 Canned Sardines Spicy		     155g   18.75
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (50 chars): 00000002 Canned Sardines Spicy		     155g   18.75
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000003 Condensed Milk 		     300mL  53.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000003 Condensed Milk 		     300mL  53.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000004 Evaporated Milk		     410mL  44.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000004 Evaporated Milk		     410mL  44.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (43 chars): 00000005 Powdered Milk			     300g   96.25
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (43 chars): 00000005 Powdered Milk			     300g   96.25
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (43 chars): 00000006 Ground Coffee			     50g    43.25
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (43 chars): 00000006 Ground Coffee			     50g    43.25
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (42 chars): 00000007 3-in-1 Coffee			     28g    7.25
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (42 chars): 00000007 3-in-1 Coffee			     28g    7.25
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (41 chars): 00000008 Pinoy Tasty			     450g   40.50
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (41 chars): 00000008 Pinoy Tasty			     450g   40.50
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000009 Pinoy Pandesal 		     250g   25.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000009 Pinoy Pandesal 		     250g   25.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (57 chars): 00000010 Instant Noodles Chicken Flavor      55g    7.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (57 chars): 00000010 Instant Noodles Chicken Flavor      55g    7.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (54 chars): 00000011 Instant Noodles Beef Flavor	     55g    7.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (54 chars): 00000011 Instant Noodles Beef Flavor	     55g    7.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (46 chars): 00000012 Iodized Rock Salt		     1kg    23.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (46 chars): 00000012 Iodized Rock Salt		     1kg    23.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (48 chars): 00000013 Laundry FabCon Soap		     370g   23.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (48 chars): 00000013 Laundry FabCon Soap		     370g   23.00
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000014 Distilled Water		     1L     25.25
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000014 Distilled Water		     1L     25.25
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000015 Purified Water 		     1L     18.50
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (44 chars): 00000015 Purified Water 		     1L     18.50
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (46 chars): 00000016 Mineralized Water		     1L     19.50
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (46 chars): 00000016 Mineralized Water		     1L     19.50
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (34 chars): 00000017 Luncheon Meat			     165
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (34 chars): 00000017 Luncheon Meat			     165
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (40 chars): 00000027Ketchup 			     155g   00007000
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (40 chars): 00000027Ketchup 			     155g   00007000
+
+2026-04-02 18:03:46,998 - WARNING - Record too short (39 chars): 00000032Pepper				     155g   00008000
+
+2026-04-02 18:03:46,998 - WARNING - Line 38: Record too short, skipping
+2026-04-02 18:03:46,998 - INFO - Loaded 0 valid products from DATABASE.txt
+2026-04-02 18:03:46,998 - INFO - Duplicates: 0, Invalid: 37
+2026-04-02 18:03:46,998 - INFO - Loading products.txt from products.txt
+2026-04-02 18:03:47,000 - INFO - Loaded 26 additional products from products.txt
+2026-04-02 18:03:47,000 - INFO - Inserting 26 products into PostgreSQL
+2026-04-02 18:03:47,027 - INFO - Successfully inserted 26 products
+2026-04-02 18:03:47,027 - INFO - 
+╔════════════════════════════════════════════════════════════╗
+║           MIGRATION REPORT - PRODUCTS                      ║
+╚════════════════════════════════════════════════════════════╝
+
+Total Products Loaded:     26
+Duplicates Removed:        0
+Invalid Records:           37
+
+Products by Price Range:
+  < 10.00 PHP:             3
+  10.00 - 50.00 PHP:       20
+  50.00 - 100.00 PHP:      3
+  > 100.00 PHP:            0
+
+Sample Products:
+  1. 00000001 | Canned Sardines                | 155g       | PHP 18.75
+  2. 00000002 | Canned Sardines Spicy          | 155g       | PHP 18.75
+  3. 00000003 | Condensed Milk                 | 300mL      | PHP 53.00
+  4. 00000004 | Evaporated Milk                | 410mL      | PHP 44.00
+  5. 00000005 | Powdered Milk                  | 300g       | PHP 96.25
+
+============================================================
+
+2026-04-02 18:03:47,028 - INFO - ✓ Migration completed successfully!
+2026-04-02 18:03:47,028 - INFO - ============================================================

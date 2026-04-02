@@ -1,0 +1,26 @@
+00000001 Canned Sardines                     155g   18.75  
+00000002 Canned Sardines Spicy               155g   18.75  
+00000003 Condensed Milk                      300mL  53.00  
+00000004 Evaporated Milk                     410mL  44.00  
+00000005 Powdered Milk                       300g   96.25  
+00000006 Ground Coffee                       50g    43.25  
+00000007 3-in-1 Coffee                       28g    7.25   
+00000008 Pinoy Tasty                         450g   40.50  
+00000009 Pinoy Pandesal                      250g   25.00  
+00000010 Instant Noodles Chicken Flavor      55g    7.00   
+00000011 Instant Noodles Beef Flavor         55g    7.00   
+00000012 Iodized Rock Salt                   1kg    23.00  
+00000013 Laundry FabCon Soap                 370g   23.00  
+00000014 Distilled Water                     1L     25.25  
+00000015 Purified Water                      1L     18.50  
+00000016 Mineralized Water                   1L     19.50  
+00000017 Luncheon Meat                       165g   39.00  
+00000018 Meat Loaf                           150g   23.00  
+00000019 Corned Beef                         150g   28.50  
+00000020 Beef Loaf                           150g   22.00  
+00000021 Vinegar                             350mL  17.50  
+00000022 Patis                               350mL  23.25  
+00000023 Soy Sauce                           350mL  20.25  
+00000024 Toilet Soap                         60g    19.75  
+00000025 Battery-Pack of 2                   AA     27.00  
+00000026 Battery-Pack of 2                   D      51.25  

@@ -1,0 +1,453 @@
+2026-04-02 17:54:23 - root - INFO - Logging initialized
+2026-04-02 17:54:23 - __main__ - INFO - Application starting...
+2026-04-02 17:54:23 - __main__ - INFO - Database connection initialized
+2026-04-02 17:54:23 - root - ERROR - Fatal error: (psycopg2.errors.InsufficientPrivilege) permission denied for schema public
+LINE 2: CREATE TABLE products (
+                     ^
+
+[SQL: 
+CREATE TABLE products (
+	id SERIAL NOT NULL, 
+	code VARCHAR(8) NOT NULL, 
+	name VARCHAR(100) NOT NULL, 
+	unit VARCHAR(20) NOT NULL, 
+	price NUMERIC(10, 2) NOT NULL, 
+	created_at TIMESTAMP WITHOUT TIME ZONE, 
+	updated_at TIMESTAMP WITHOUT TIME ZONE, 
+	PRIMARY KEY (id), 
+	UNIQUE (code)
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.InsufficientPrivilege: permission denied for schema public
+LINE 2: CREATE TABLE products (
+                     ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/main.py", line 85, in main
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/database/init_db.py", line 29, in init_database
+    Base.metadata.create_all(engine)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/schema.py", line 5928, in create_all
+    bind._run_ddl_visitor(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        ddl.SchemaGenerator, self, checkfirst=checkfirst, tables=tables
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 3268, in _run_ddl_visitor
+    conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2467, in _run_ddl_visitor
+    ).traverse_single(element)
+      ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/ddl.py", line 984, in visit_metadata
+    self.traverse_single(
+    ~~~~~~~~~~~~~~~~~~~~^
+        table,
+        ^^^^^^
+    ...<2 lines>...
+        _is_metadata_operation=True,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/ddl.py", line 1022, in visit_table
+    )._invoke_with(self.connection)
+      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/ddl.py", line 321, in _invoke_with
+    return bind.execute(self)
+           ~~~~~~~~~~~~^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+    ret = self._execute_context(
+        dialect,
+    ...<4 lines>...
+        compiled,
+    )
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.InsufficientPrivilege) permission denied for schema public
+LINE 2: CREATE TABLE products (
+                     ^
+
+[SQL: 
+CREATE TABLE products (
+	id SERIAL NOT NULL, 
+	code VARCHAR(8) NOT NULL, 
+	name VARCHAR(100) NOT NULL, 
+	unit VARCHAR(20) NOT NULL, 
+	price NUMERIC(10, 2) NOT NULL, 
+	created_at TIMESTAMP WITHOUT TIME ZONE, 
+	updated_at TIMESTAMP WITHOUT TIME ZONE, 
+	PRIMARY KEY (id), 
+	UNIQUE (code)
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-04-02 17:55:14 - root - INFO - Logging initialized
+2026-04-02 17:55:14 - __main__ - INFO - Application starting...
+2026-04-02 17:55:14 - __main__ - INFO - Database connection initialized
+2026-04-02 17:55:14 - root - ERROR - Fatal error: (psycopg2.errors.InsufficientPrivilege) permission denied for schema public
+LINE 2: CREATE TABLE products (
+                     ^
+
+[SQL: 
+CREATE TABLE products (
+	id SERIAL NOT NULL, 
+	code VARCHAR(8) NOT NULL, 
+	name VARCHAR(100) NOT NULL, 
+	unit VARCHAR(20) NOT NULL, 
+	price NUMERIC(10, 2) NOT NULL, 
+	created_at TIMESTAMP WITHOUT TIME ZONE, 
+	updated_at TIMESTAMP WITHOUT TIME ZONE, 
+	PRIMARY KEY (id), 
+	UNIQUE (code)
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.InsufficientPrivilege: permission denied for schema public
+LINE 2: CREATE TABLE products (
+                     ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/main.py", line 85, in main
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/database/init_db.py", line 29, in init_database
+    Base.metadata.create_all(engine)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/schema.py", line 5928, in create_all
+    bind._run_ddl_visitor(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        ddl.SchemaGenerator, self, checkfirst=checkfirst, tables=tables
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 3268, in _run_ddl_visitor
+    conn._run_ddl_visitor(visitorcallable, element, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2467, in _run_ddl_visitor
+    ).traverse_single(element)
+      ~~~~~~~~~~~~~~~^^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/ddl.py", line 984, in visit_metadata
+    self.traverse_single(
+    ~~~~~~~~~~~~~~~~~~~~^
+        table,
+        ^^^^^^
+    ...<2 lines>...
+        _is_metadata_operation=True,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/visitors.py", line 661, in traverse_single
+    return meth(obj, **kw)
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/ddl.py", line 1022, in visit_table
+    )._invoke_with(self.connection)
+      ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/ddl.py", line 321, in _invoke_with
+    return bind.execute(self)
+           ~~~~~~~~~~~~^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/ddl.py", line 187, in _execute_on_connection
+    return connection._execute_ddl(
+           ~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1530, in _execute_ddl
+    ret = self._execute_context(
+        dialect,
+    ...<4 lines>...
+        compiled,
+    )
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.InsufficientPrivilege) permission denied for schema public
+LINE 2: CREATE TABLE products (
+                     ^
+
+[SQL: 
+CREATE TABLE products (
+	id SERIAL NOT NULL, 
+	code VARCHAR(8) NOT NULL, 
+	name VARCHAR(100) NOT NULL, 
+	unit VARCHAR(20) NOT NULL, 
+	price NUMERIC(10, 2) NOT NULL, 
+	created_at TIMESTAMP WITHOUT TIME ZONE, 
+	updated_at TIMESTAMP WITHOUT TIME ZONE, 
+	PRIMARY KEY (id), 
+	UNIQUE (code)
+)
+
+]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-04-02 17:56:05 - root - INFO - Logging initialized
+2026-04-02 17:56:05 - __main__ - INFO - Application starting...
+2026-04-02 17:56:05 - __main__ - INFO - Database connection initialized
+2026-04-02 17:56:05 - root - ERROR - Fatal error: (psycopg2.errors.UndefinedTable) relation "admins" does not exist
+LINE 2: FROM admins 
+             ^
+
+[SQL: SELECT admins.id AS admins_id, admins.email AS admins_email, admins.password_hash AS admins_password_hash, admins.is_active AS admins_is_active, admins.created_at AS admins_created_at, admins.last_login AS admins_last_login 
+FROM admins 
+WHERE admins.email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'robby@gmail.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "admins" does not exist
+LINE 2: FROM admins 
+             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/main.py", line 85, in main
+    init_database()
+    ~~~~~~~~~~~~~^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/database/init_db.py", line 41, in init_database
+    if not admin_repo.get_by_email(default_email):
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/repositories/admin_repository.py", line 32, in get_by_email
+    ).first()
+      ~~~~~^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/orm/query.py", line 2759, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/orm/query.py", line 2857, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2351, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2249, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self,
+        ^^^^^
+    ...<4 lines>...
+        conn,
+        ^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/orm/context.py", line 306, in orm_execute_statement
+    result = conn.execute(
+        statement, params or {}, execution_options=execution_options
+    )
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/giuseppecavone/langchain-introduction/CobolModernizer/output/venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedTable) relation "admins" does not exist
+LINE 2: FROM admins 
+             ^
+
+[SQL: SELECT admins.id AS admins_id, admins.email AS admins_email, admins.password_hash AS admins_password_hash, admins.is_active AS admins_is_active, admins.created_at AS admins_created_at, admins.last_login AS admins_last_login 
+FROM admins 
+WHERE admins.email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'robby@gmail.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2026-04-02 18:02:48 - root - INFO - Logging initialized
+2026-04-02 18:02:48 - __main__ - INFO - Application starting...
+2026-04-02 18:02:48 - __main__ - INFO - Database connection initialized
+2026-04-02 18:02:48 - __main__ - INFO - Database initialized
+2026-04-02 18:02:48 - __main__ - INFO - Repositories initialized
+2026-04-02 18:02:48 - __main__ - INFO - Services initialized
+2026-04-02 18:04:48 - root - INFO - Logging initialized
+2026-04-02 18:04:48 - __main__ - INFO - Application starting...
+2026-04-02 18:04:48 - __main__ - INFO - Database connection initialized
+2026-04-02 18:04:48 - __main__ - INFO - Database initialized
+2026-04-02 18:04:48 - __main__ - INFO - Repositories initialized
+2026-04-02 18:04:48 - __main__ - INFO - Services initialized
+2026-04-02 18:05:07 - services.auth_service - WARNING - Authentication failed: invalid password - robby@gmail.com
+2026-04-02 18:05:07 - services.auth_service - ERROR - Authentication error: Invalid email or password
+2026-04-02 18:05:07 - cli.main_menu - WARNING - Failed login attempt for email: robby@gmail.com
+2026-04-02 18:05:31 - services.auth_service - INFO - Admin authenticated successfully: robby@gmail.com
+2026-04-02 18:06:36 - cli.product_menu - WARNING - Product creation failed: Product code must be exactly 8 digits
+2026-04-02 18:11:42 - cli.admin_menu - INFO - Admin 1 logged out
+2026-04-02 18:11:44 - cli.main_menu - INFO - Application terminated by user
+2026-04-02 18:11:44 - __main__ - INFO - Application terminated normally
+2026-04-02 18:11:49 - root - INFO - Logging initialized
+2026-04-02 18:11:49 - __main__ - INFO - Application starting...
+2026-04-02 18:11:49 - __main__ - INFO - Database connection initialized
+2026-04-02 18:11:49 - __main__ - INFO - Database initialized
+2026-04-02 18:11:49 - __main__ - INFO - Repositories initialized
+2026-04-02 18:11:49 - __main__ - INFO - Services initialized
+2026-04-02 18:12:06 - services.auth_service - INFO - Admin authenticated successfully: robby@gmail.com
+2026-04-02 18:12:25 - cli.order_menu - WARNING - Receipt retrieval failed: Order 1 not found
+2026-04-02 18:28:22 - cli.admin_menu - INFO - Admin 1 logged out
+2026-04-02 18:28:23 - cli.main_menu - INFO - Application terminated by user
+2026-04-02 18:28:23 - __main__ - INFO - Application terminated normally

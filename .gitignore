@@ -11,7 +11,6 @@ mlruns/
 mlflow.db
 
 # Output generati dall'AI
-output/
 
 # Mac
 .DS_Store
