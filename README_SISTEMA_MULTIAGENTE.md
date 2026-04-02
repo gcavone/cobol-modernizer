@@ -46,7 +46,7 @@ START → Orchestrator → Discovery / Architecture / Migration / CodeGen / Revi
 
 ```bash
 git clone https://github.com/gcavone/cobol-modernizer.git
-cd cobol-modernizer/CobolModernizer2
+cd cobol-modernizer
 ```
 
 ### 2. Installa le dipendenze con Poetry
@@ -62,8 +62,6 @@ pip install marimo langchain langgraph langchain-groq langchain-mistralai langch
 ```
 
 ### 3. Configura le chiavi API
-
-Crea un file `.env` nella cartella `CobolModernizer2/`:
 
 ```bash
 cp .env.example .env
@@ -145,7 +143,7 @@ outputs/
 └── codegen_HHMMSS.md        ← Riepilogo file generati
 ```
 
-Il progetto Python completo viene salvato in `output/` come ZIP.
+Il progetto Python completo viene salvato in `output/`.
 
 ---
 
