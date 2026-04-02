@@ -12,7 +12,7 @@ Questo repository contiene il progetto finale del corso, composto da due parti:
 
 | Parte | Descrizione | Cartella |
 |-------|-------------|----------|
-| **COBOL Modernizer** | Sistema multi-agente LangGraph che analizza codice COBOL e genera automaticamente un progetto Python moderno | `CobolModernizer2/` |
+| **COBOL Modernizer** | Sistema multi-agente LangGraph che analizza codice COBOL e genera automaticamente un progetto Python moderno | root del repo |
 | **Supermarket System** | Il progetto Python generato dal sistema — gestionale per supermercati modernizzato da COBOL a Python + PostgreSQL | `output/` |
 
 ---
@@ -23,20 +23,30 @@ Questo repository contiene il progetto finale del corso, composto da due parti:
 cobol-modernizer/
 │
 ├── README.md                        ← Questo file
+├── README_SISTEMA_MULTIAGENTE.md    ← Istruzioni sistema multi-agente
+├── .env.example                     ← Template variabili d'ambiente (multi-agente)
+├── cobol_modernizer2.py             ← Notebook Marimo principale
+├── pyproject.toml                   ← Dipendenze Poetry
+├── poetry.lock
 │
-├── CobolModernizer2/                ← Sistema multi-agente (LangGraph)
-│   ├── cobol_modernizer2.py         ← Notebook Marimo principale
-│   ├── prompts/                     ← Prompt degli agenti (.md)
-│   │   ├── 01_orchestrator.md
-│   │   ├── 02_discovery.md
-│   │   ├── 03_architecture.md
-│   │   ├── 04_migration.md
-│   │   ├── 05_codegen.md
-│   │   ├── 05b_filelist.md
-│   │   └── 06_reviewer.md
-│   └── outputs/                     ← Output .md generati dagli agenti
+├── prompts/                         ← Prompt degli agenti (.md)
+│   ├── 01_orchestrator.md
+│   ├── 02_discovery.md
+│   ├── 03_architecture.md
+│   ├── 04_migration.md
+│   ├── 05_codegen.md
+│   ├── 05b_filelist.md
+│   └── 06_reviewer.md
+│
+├── outputs/                         ← Output .md generati dagli agenti
+│
+├── ACCOUNTING_SYSTEM.COB            ← Codice COBOL originale
+├── BUYROUTINE.COB
+├── DATABASE.txt
+├── products.txt
 │
 └── output/                          ← Progetto Python generato
+    ├── README.md                    ← Istruzioni progetto Python
     ├── main.py
     ├── etl_migration.py
     ├── requirements.txt
