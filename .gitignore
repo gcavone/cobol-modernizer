@@ -1,16 +1,37 @@
-# Python
+# ── Python ──────────────────────────────────────────────────
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# ── Ambienti virtuali ────────────────────────────────────────
 .venv/
+venv/
+output/venv/
 
-# Environment
+# ── Variabili d'ambiente (contengono segreti) ────────────────
 .env
+output/.env
 
-# MLflow
+# ── MLflow ──────────────────────────────────────────────────
 mlruns/
 mlflow.db
 
-# Output generati dall'AI
+# ── Log e file temporanei ────────────────────────────────────
+*.log
+output/logs/
+output/.pytest_cache/
+output/__pycache__/
 
-# Mac
+# ── Output generati dagli agenti (rigenerabile) ──────────────
+outputs/
+
+# ── Mac ─────────────────────────────────────────────────────
 .DS_Store
+**/.DS_Store
+
+# ── ZIP (file pesanti non necessari nel repo) ────────────────
+*.zip
+
+# ── Marimo cache ────────────────────────────────────────────
+__marimo__/
