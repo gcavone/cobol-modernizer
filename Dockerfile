@@ -33,4 +33,4 @@ RUN mkdir -p outputs output
 EXPOSE 2718
 
 # Avvia Marimo
-CMD ["marimo", "run", "cobol_modernizer2.py", "--host", "0.0.0.0", "--port", "2718"]
+CMD ["marimo", "edit", "--no-token", "cobol_modernizer2.py", "--host", "0.0.0.0", "--port", "2718"]
