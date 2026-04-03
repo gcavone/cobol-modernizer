@@ -40,6 +40,8 @@ make modernizer-stop
 Gli output generati dagli agenti (file `.md`) vengono salvati in `outputs/`.  
 Il codice Python generato viene salvato in `output/`.
 
+> 💡 **Per visualizzare il codice sorgente delle celle**, clicca sul menu `...` in alto a destra nell'interfaccia Marimo e seleziona **Show code**.
+
 📖 Istruzioni dettagliate: [README_SISTEMA_MULTIAGENTE.md](README_SISTEMA_MULTIAGENTE.md)
 
 ---
