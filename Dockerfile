@@ -8,22 +8,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Aggiorna pip
-RUN pip install --no-cache-dir --upgrade pip
+# Installa Poetry 2.x
+RUN pip install --no-cache-dir "poetry>=2.0.0,<3.0.0"
 
-# Installa dipendenze con versioni fisse per evitare conflitti
-RUN pip install --no-cache-dir \
-    "marimo==0.10.19" \
-    "langchain==0.3.25" \
-    "langchain-core==0.3.58" \
-    "langgraph==0.2.74" \
-    "langgraph-checkpoint==2.0.26" \
-    "langchain-groq==0.3.2" \
-    "langchain-mistralai==0.2.4" \
-    "langchain-anthropic==0.3.10" \
-    "mlflow==2.21.3" \
-    "python-dotenv==1.0.0" \
-    "pydantic==2.10.6"
+# Copia i file di dipendenze
+COPY pyproject.toml poetry.lock ./
+
+# Installa dipendenze dal lock file — veloce e senza conflitti
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-ansi --no-root --only main
 
 # Copia il codice sorgente
 COPY cobol_modernizer2.py ./
