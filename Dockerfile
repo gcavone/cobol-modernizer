@@ -8,15 +8,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Installa Poetry
-RUN pip install poetry==1.8.3
-
-# Copia file di configurazione Poetry
-COPY pyproject.toml poetry.lock* ./
-
-# Installa dipendenze Python (senza dev)
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi --no-root
+# Installa dipendenze Python direttamente con pip
+RUN pip install --no-cache-dir \
+    marimo \
+    langchain==0.3.25 \
+    langgraph \
+    langchain-groq \
+    langchain-mistralai \
+    langchain-anthropic \
+    mlflow \
+    python-dotenv \
+    pydantic
 
 # Copia il codice sorgente
 COPY cobol_modernizer2.py ./
@@ -32,5 +34,5 @@ RUN mkdir -p outputs output
 # Esponi la porta Marimo
 EXPOSE 2718
 
-# Avvia Marimo in modalita run (sola lettura, senza editor)
+# Avvia Marimo
 CMD ["marimo", "run", "cobol_modernizer2.py", "--host", "0.0.0.0", "--port", "2718"]
