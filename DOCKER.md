@@ -32,12 +32,15 @@ cp .env.example .env
 make modernizer
 
 # Apri il browser su http://localhost:2718
+
 # Ferma il sistema
 make modernizer-stop
 ```
 
 Gli output generati dagli agenti (file `.md`) vengono salvati in `outputs/`.  
 Il codice Python generato viene salvato in `output/`.
+
+📖 Istruzioni dettagliate: [README_SISTEMA_MULTIAGENTE.md](README_SISTEMA_MULTIAGENTE.md)
 
 ---
 
@@ -55,6 +58,8 @@ make supermarket
 ```
 
 Credenziali admin: `robby@gmail.com` / `robby@123`
+
+📖 Istruzioni dettagliate: [output/README.md](output/README.md)
 
 ---
 
@@ -99,7 +104,7 @@ docker compose --profile modernizer --profile supermarket down
 cobol-modernizer/
 ├── Dockerfile              ← immagine sistema multi-agente
 ├── docker-compose.yml      ← orchestra tutti i servizi
-├── .dockerignore           ← esclude file non necessari
+├── .dockerignore
 ├── Makefile                ← comandi rapidi
 ├── DOCKER.md               ← questa guida
 └── output/
@@ -123,15 +128,12 @@ cobol-modernizer/
 
 **Il container supermarket non si connette al DB**
 ```bash
-# Verifica che il database sia healthy
-docker compose ps
-# Aspetta qualche secondo e riprova
-make supermarket
+docker compose ps        # verifica che db sia healthy
+make supermarket         # riprova
 ```
 
 **Pulisci tutto e ricomincia da capo**
 ```bash
 make clean
-make supermarket-db
 make supermarket
 ```

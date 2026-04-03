@@ -6,14 +6,31 @@
 
 ---
 
+## Avvio Rapido con Docker 🐳
+
+Il modo più semplice per avviare entrambi i sistemi — senza installare Python, Poetry o PostgreSQL:
+
+```bash
+git clone https://github.com/gcavone/cobol-modernizer.git
+cd cobol-modernizer
+cp .env.example .env          # inserisci la tua chiave API nel file .env
+
+make modernizer               # avvia il sistema multi-agente su http://localhost:2718
+make supermarket              # avvia il gestionale Python con PostgreSQL
+```
+
+📖 **[Guida Docker completa → DOCKER.md](DOCKER.md)**
+
+---
+
 ## Panoramica
 
 Questo repository contiene il progetto finale del corso, composto da due parti:
 
-| Parte | Descrizione | Cartella |
-|-------|-------------|----------|
-| **COBOL Modernizer** | Sistema multi-agente LangGraph che analizza codice COBOL e genera automaticamente un progetto Python moderno | root del repo |
-| **Supermarket System** | Il progetto Python generato dal sistema — gestionale per supermercati modernizzato da COBOL a Python + PostgreSQL | `output/` |
+| Parte | Descrizione | Avvio |
+|-------|-------------|-------|
+| **COBOL Modernizer** | Sistema multi-agente LangGraph che analizza codice COBOL e genera automaticamente un progetto Python moderno | `make modernizer` |
+| **Supermarket System** | Il progetto Python generato — gestionale per supermercati modernizzato da COBOL a Python + PostgreSQL | `make supermarket` |
 
 ---
 
@@ -23,21 +40,17 @@ Questo repository contiene il progetto finale del corso, composto da due parti:
 cobol-modernizer/
 │
 ├── README.md                        ← Questo file
+├── DOCKER.md                        ← Guida Docker completa
 ├── README_SISTEMA_MULTIAGENTE.md    ← Istruzioni sistema multi-agente
-├── .env.example                     ← Template variabili d'ambiente (multi-agente)
+├── Dockerfile                       ← Immagine Docker sistema multi-agente
+├── docker-compose.yml               ← Orchestra tutti i servizi
+├── Makefile                         ← Comandi rapidi
+├── .env.example                     ← Template variabili d'ambiente
+├── .dockerignore
+│
 ├── cobol_modernizer2.py             ← Notebook Marimo principale
 ├── pyproject.toml                   ← Dipendenze Poetry
-├── poetry.lock
-│
 ├── prompts/                         ← Prompt degli agenti (.md)
-│   ├── 01_orchestrator.md
-│   ├── 02_discovery.md
-│   ├── 03_architecture.md
-│   ├── 04_migration.md
-│   ├── 05_codegen.md
-│   ├── 05b_filelist.md
-│   └── 06_reviewer.md
-│
 ├── outputs/                         ← Output .md generati dagli agenti
 │
 ├── ACCOUNTING_SYSTEM.COB            ← Codice COBOL originale
@@ -47,6 +60,7 @@ cobol-modernizer/
 │
 └── output/                          ← Progetto Python generato
     ├── README.md                    ← Istruzioni progetto Python
+    ├── Dockerfile                   ← Immagine Docker supermarket
     ├── main.py
     ├── etl_migration.py
     ├── requirements.txt
@@ -96,6 +110,7 @@ Il gestionale per supermercati modernizzato, con:
 | Osservabilità | MLflow |
 | Database | PostgreSQL + SQLAlchemy |
 | Gestione ambiente | Poetry |
+| Containerizzazione | Docker + Docker Compose |
 | Test | pytest |
 
 ---

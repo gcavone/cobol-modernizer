@@ -28,7 +28,22 @@ START → Orchestrator → Discovery / Architecture / Migration / CodeGen / Revi
 
 ---
 
-## Prerequisiti
+## Avvio con Docker 🐳 (consigliato)
+
+Il modo più semplice — senza installare Python o Poetry:
+
+```bash
+cp .env.example .env   # inserisci la tua chiave API
+make modernizer        # avvia Marimo su http://localhost:2718
+```
+
+📖 **[Guida Docker completa → DOCKER.md](DOCKER.md)**
+
+---
+
+## Installazione Manuale
+
+### Prerequisiti
 
 - Python 3.11+
 - [Poetry](https://python-poetry.org/) per la gestione delle dipendenze
@@ -38,15 +53,11 @@ START → Orchestrator → Discovery / Architecture / Migration / CodeGen / Revi
   - [Mistral](https://console.mistral.ai/) (gratuito)
   - [Anthropic](https://console.anthropic.com/) (a pagamento)
 
----
-
-## Installazione
-
 ### 1. Clona il repository
 
 ```bash
 git clone https://github.com/gcavone/cobol-modernizer.git
-cd cobol-modernizer/CobolModernizer2
+cd cobol-modernizer
 ```
 
 ### 2. Installa le dipendenze con Poetry
@@ -62,8 +73,6 @@ pip install marimo langchain langgraph langchain-groq langchain-mistralai langch
 ```
 
 ### 3. Configura le chiavi API
-
-Crea un file `.env` nella cartella `CobolModernizer2/`:
 
 ```bash
 cp .env.example .env
@@ -91,9 +100,28 @@ marimo edit cobol_modernizer2.py
 
 ---
 
+## Struttura del Notebook
+
+Il notebook `cobol_modernizer2.py` è organizzato in sezioni con titoli visibili nell'interfaccia Marimo:
+
+| Cella | Titolo | Contenuto |
+|-------|--------|-----------|
+| Titolo | 🤖 COBOL Modernizer v2 | Intestazione del notebook |
+| 1 | Import | Tutte le librerie (LangChain, MLflow, Pydantic, ecc.) |
+| 2 | 📂 Caricamento file COBOL e prompt | File sorgente COBOL e prompt degli agenti |
+| 3 | ⚙️ Configurazione LLM e costanti | **Punto di configurazione principale** — modello LLM e costanti |
+| 4 | 🧠 Stato condiviso e Orchestrator | `ModernizerState` e nodo Orchestrator |
+| 5 | 🤖 Nodi agenti | Discovery, Architecture, Migration, CodeGen, Reviewer |
+| 6 | 🕸️ Grafo LangGraph e chatbot handler | Costruzione grafo, chatbot handler, MLflow tracking |
+| 7 | Grafo Mermaid | Visualizzazione del flusso del grafo |
+| 8 | Interfaccia chat | Chat con prompt rapidi |
+| 9 | 📊 Pannello MLflow | Avvio e accesso alla UI MLflow |
+
+---
+
 ## Configurazione del Modello LLM
 
-Il notebook è organizzato in celle con titoli visibili nell'interfaccia. La **cella di configurazione** (evidenziata in giallo con l'avviso "Modifica qui per cambiare modello") contiene la selezione del modello LLM. Cambia **una sola riga** per usare un modello diverso:
+Il notebook evidenzia in giallo la cella di configurazione con l'avviso **"Modifica qui per cambiare modello"**. Cambia **una sola riga** per usare un modello diverso:
 
 ```python
 # Groq (gratuito, consigliato per test)
@@ -129,26 +157,7 @@ llm = ChatAnthropic(model="claude-haiku-4-5-20251001", temperature=0, api_key=os
 5. Invia: `Genera lo script di migrazione dati in PostgreSQL`
 6. Invia: `Genera il progetto completo`
 7. Attendi la generazione (circa 20-40 minuti con Groq gratuito)
-8. Scarica lo ZIP del progetto generato
-
----
-
-## Struttura del Notebook
-
-Il notebook `cobol_modernizer2.py` è organizzato in sezioni con titoli visibili nell'interfaccia Marimo:
-
-| Cella | Titolo | Contenuto |
-|-------|--------|-----------|
-| Titolo | 🤖 COBOL Modernizer v2 | Intestazione del notebook |
-| 1 | Import | Tutte le librerie (LangChain, MLflow, Pydantic, ecc.) |
-| 2 | 📂 Caricamento file COBOL e prompt | File sorgente COBOL e prompt degli agenti |
-| 3 | ⚙️ Configurazione LLM e costanti | **Punto di configurazione principale** — modello LLM e costanti |
-| 4 | 🧠 Stato condiviso e Orchestrator | `ModernizerState` e nodo Orchestrator |
-| 5 | 🤖 Nodi agenti | Discovery, Architecture, Migration, CodeGen, Reviewer |
-| 6 | 🕸️ Grafo LangGraph e chatbot handler | Costruzione grafo, chatbot handler, MLflow tracking |
-| 7 | Grafo Mermaid | Visualizzazione del flusso del grafo |
-| 8 | Interfaccia chat | Chat con prompt rapidi |
-| 9 | 📊 Pannello MLflow | Avvio e accesso alla UI MLflow |
+8. Il progetto Python generato è disponibile nella cartella `output/`
 
 ---
 
@@ -164,7 +173,7 @@ outputs/
 └── codegen_HHMMSS.md        ← Riepilogo file generati
 ```
 
-Il progetto Python completo viene salvato in `output/` come ZIP.
+Il progetto Python completo viene salvato in `output/`.
 
 ---
 
@@ -180,6 +189,8 @@ Apri il browser su `http://localhost:5000` per vedere:
 - Ogni run con parametri e metriche
 - Gli output degli agenti come artifact
 - Il ragionamento dell'Orchestrator per ogni decisione
+
+> Con Docker, il pannello MLflow è accessibile direttamente dall'interfaccia Marimo.
 
 ---
 
