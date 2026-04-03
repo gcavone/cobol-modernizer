@@ -46,7 +46,7 @@ START → Orchestrator → Discovery / Architecture / Migration / CodeGen / Revi
 
 ```bash
 git clone https://github.com/gcavone/cobol-modernizer.git
-cd cobol-modernizer
+cd cobol-modernizer/CobolModernizer2
 ```
 
 ### 2. Installa le dipendenze con Poetry
@@ -62,6 +62,8 @@ pip install marimo langchain langgraph langchain-groq langchain-mistralai langch
 ```
 
 ### 3. Configura le chiavi API
+
+Crea un file `.env` nella cartella `CobolModernizer2/`:
 
 ```bash
 cp .env.example .env
@@ -91,7 +93,7 @@ marimo edit cobol_modernizer2.py
 
 ## Configurazione del Modello LLM
 
-Nella **cella 3** del notebook trovi la configurazione del modello. Cambia **una sola riga** per usare un modello diverso:
+Il notebook è organizzato in celle con titoli visibili nell'interfaccia. La **cella di configurazione** (evidenziata in giallo con l'avviso "Modifica qui per cambiare modello") contiene la selezione del modello LLM. Cambia **una sola riga** per usare un modello diverso:
 
 ```python
 # Groq (gratuito, consigliato per test)
@@ -131,6 +133,25 @@ llm = ChatAnthropic(model="claude-haiku-4-5-20251001", temperature=0, api_key=os
 
 ---
 
+## Struttura del Notebook
+
+Il notebook `cobol_modernizer2.py` è organizzato in sezioni con titoli visibili nell'interfaccia Marimo:
+
+| Cella | Titolo | Contenuto |
+|-------|--------|-----------|
+| Titolo | 🤖 COBOL Modernizer v2 | Intestazione del notebook |
+| 1 | Import | Tutte le librerie (LangChain, MLflow, Pydantic, ecc.) |
+| 2 | 📂 Caricamento file COBOL e prompt | File sorgente COBOL e prompt degli agenti |
+| 3 | ⚙️ Configurazione LLM e costanti | **Punto di configurazione principale** — modello LLM e costanti |
+| 4 | 🧠 Stato condiviso e Orchestrator | `ModernizerState` e nodo Orchestrator |
+| 5 | 🤖 Nodi agenti | Discovery, Architecture, Migration, CodeGen, Reviewer |
+| 6 | 🕸️ Grafo LangGraph e chatbot handler | Costruzione grafo, chatbot handler, MLflow tracking |
+| 7 | Grafo Mermaid | Visualizzazione del flusso del grafo |
+| 8 | Interfaccia chat | Chat con prompt rapidi |
+| 9 | 📊 Pannello MLflow | Avvio e accesso alla UI MLflow |
+
+---
+
 ## Output Generati
 
 Dopo l'esecuzione troverai nella cartella `outputs/`:
@@ -143,7 +164,7 @@ outputs/
 └── codegen_HHMMSS.md        ← Riepilogo file generati
 ```
 
-Il progetto Python completo viene salvato in `output/`.
+Il progetto Python completo viene salvato in `output/` come ZIP.
 
 ---
 
