@@ -1,0 +1,44 @@
+# ── .dockerignore — sistema multi-agente ──────────────────────────────────────
+# Esclude file non necessari nell'immagine Docker
+
+# Ambienti virtuali
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Output e log
+outputs/
+output/
+mlruns/
+mlflow.db
+*.log
+logs/
+
+# Ambiente e segreti
+.env
+
+# Git
+.git/
+.gitignore
+
+# Docker stesso
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Mac
+.DS_Store
+**/.DS_Store
+
+# Marimo cache
+__marimo__/
+
+# ZIP generati
+*.zip
+
+# Test e CI
+tests/
+*.md
+Makefile

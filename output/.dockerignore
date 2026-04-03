@@ -1,0 +1,29 @@
+# ── .dockerignore — Supermarket System ────────────────────────────────────────
+
+# Ambienti virtuali
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Log (creati a runtime)
+logs/
+
+# Ambiente e segreti
+.env
+
+# Test
+tests/
+
+# Git e Docker
+.git/
+.gitignore
+Dockerfile
+.dockerignore
+
+# Mac
+.DS_Store
+**/.DS_Store
+
+# Pytest cache
+.pytest_cache/

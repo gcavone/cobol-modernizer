@@ -1,0 +1,83 @@
+# ── docker-compose.yml — COBOL Modernizer ─────────────────────────────────────
+# Gestisce due sistemi distinti tramite profili:
+#
+#   Profilo "modernizer"  → sistema multi-agente Marimo
+#   Profilo "supermarket" → gestionale Python + PostgreSQL
+#
+# Uso rapido (vedi Makefile):
+#   make modernizer       → avvia il sistema multi-agente
+#   make supermarket-db   → avvia solo il database
+#   make supermarket      → avvia la CLI interattiva
+#   make stop             → ferma tutto
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  # ── Sistema Multi-Agente (Marimo) ──────────────────────────────────────────
+  modernizer:
+    profiles: ["modernizer"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cobol-modernizer
+    ports:
+      - "2718:2718"
+    env_file:
+      - .env
+    volumes:
+      # Monta outputs/ per salvare i file .md generati dagli agenti
+      - ./outputs:/app/outputs
+      # Monta output/ per salvare il codice Python generato
+      - ./output:/app/output
+    restart: unless-stopped
+
+  # ── Database PostgreSQL ────────────────────────────────────────────────────
+  db:
+    profiles: ["supermarket"]
+    image: postgres:15-alpine
+    container_name: supermarket-db
+    environment:
+      POSTGRES_USER:     supermarket_user
+      POSTGRES_PASSWORD: supermarket_pass
+      POSTGRES_DB:       supermarket_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U supermarket_user -d supermarket_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # ── Supermarket CLI ────────────────────────────────────────────────────────
+  supermarket:
+    profiles: ["supermarket"]
+    build:
+      context: ./output
+      dockerfile: Dockerfile
+    container_name: supermarket-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST:       db
+      DB_PORT:       5432
+      DB_NAME:       supermarket_db
+      DB_USER:       supermarket_user
+      DB_PASSWORD:   supermarket_pass
+      DATABASE_URL:  postgresql://supermarket_user:supermarket_pass@db:5432/supermarket_db
+      ADMIN_EMAIL:   robby@gmail.com
+      ADMIN_PASSWORD_HASH: $$2b$$12$$lbQ7.nODQxFqx4gDdW7st.jOq3LpeBWzvPy8FwKXo2Yl.sl7BNcSa
+      LOG_LEVEL:     INFO
+    volumes:
+      # Monta logs/ per accedere ai log dal host
+      - ./output/logs:/app/logs
+    stdin_open: true
+    tty: true
+    restart: "no"
+
+volumes:
+  postgres_data:
+    driver: local
